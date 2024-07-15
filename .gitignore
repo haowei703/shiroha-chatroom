@@ -1,6 +1,7 @@
 HELP.md
 target/
 data
+resources/upload
 log
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

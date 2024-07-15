@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shiroha.chatroom.mapper.ChatMapper">
+    <select id="searchPrivateChatMessageByPage" resultType="com.shiroha.chatroom.domain.ChatMessageDO">
+        SELECT *
+        FROM public.chat_message
+        WHERE (sender_id = #{senderId} AND receiver_id = #{receiverId})
+           OR (sender_id = #{receiverId} AND receiver_id = #{senderId})
+        ORDER BY created_at;
+    </select>
+
+    <select id="searchGroupChatMessageByPage" resultType="com.shiroha.chatroom.domain.ChatMessageDO">
+        SELECT *
+        FROM public.chat_message
+        WHERE sender_id = #{senderId}
+          AND group_id = #{groupId}
+        ORDER BY created_at;
+    </select>
+</mapper>

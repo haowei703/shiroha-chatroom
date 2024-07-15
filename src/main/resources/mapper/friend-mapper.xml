@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shiroha.chatroom.mapper.FriendShipsMapper">
+    <resultMap id="UserResultMap" type="com.shiroha.chatroom.domain.UserDO" autoMapping="true" >
+        <id column="id" property="id" />
+        <result column="username" property="username" />
+        <result column="avatar" property="avatar" />
+        <result column="status" property="status" />
+    </resultMap>
+
+    <select id="getFriends" resultMap="UserResultMap" parameterType="java.util.UUID">
+        SELECT u.id, u.username, u.avatar, u.status FROM public.friend f
+        INNER JOIN user_entity u ON f.uid = u.id
+        WHERE f.f_uid = #{from}
+        UNION
+        SELECT u.id, u.username, u.avatar, u.status FROM public.friend f
+        INNER JOIN user_entity u ON f.f_uid = u.id
+        WHERE f.uid = #{from};
+    </select>
+
+    <insert id="addFriend" parameterType="java.util.UUID">
+        INSERT INTO public.friend(UID, F_UID)
+        VALUES (#{from}, #{to})
+    </insert>
+
+    <delete id="removeFriend" parameterType="java.util.UUID">
+        DELETE FROM public.friend
+        WHERE uid = #{from} AND f_uid = #{to};
+    </delete>
+</mapper>

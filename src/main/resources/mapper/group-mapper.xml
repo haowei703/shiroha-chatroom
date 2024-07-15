@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiroha.chatroom.mapper.GroupMapper">
+    <resultMap id="GroupResultMap" type="com.shiroha.chatroom.domain.GroupDO" autoMapping="true">
+        <id property="id" column="id"/>
+        <result property="name" column="name" />
+        <result property="ownerId" column="owner_id" />
+        <collection property="members" ofType="com.shiroha.chatroom.domain.GroupMemberDO">
+            <result property="memberId" column="member_id" />
+            <result property="nickname" column="nickname" />
+            <result property="joinedAt" column="joined_at" />
+            <result property="role" column="role" />
+        </collection>
+    </resultMap>
+    <select id="insertGroup" parameterType="com.shiroha.chatroom.domain.GroupDO" statementType="CALLABLE">
+        CALL create_group_with_members(
+                #{name},
+                #{ownerId},
+                #{status},
+                #{createdAt},
+                #{updatedAt},
+                #{members,jdbcType=ARRAY,mode=IN,javaType=java.util.List,jdbcType=OTHER,typeHandler=com.shiroha.chatroom.handler.ArrayTypeHandler})
+    </select>
+
+
+    <select id="searchByIdGroupDtoList" resultMap="GroupResultMap">
+        SELECT
+            g.id AS id,
+            g.name AS name,
+            g.owner_id AS owner_id,
+            gm.member_id AS member_id,
+            gm.nickname AS nickname,
+            gm.joined_at AS joined_at,
+            gm.role AS role
+        FROM
+            "group" g
+        LEFT JOIN public.group_member gm on g.id = gm.group_id
+        WHERE
+            g.id = #{groupId};
+    </select>
+
+    <select id="searchAllByUserIdGroupDtoList" resultType="com.shiroha.chatroom.dto.GroupsDTO">
+        SELECT
+            g.id AS id,
+            g.name AS name,
+            gm.nickname AS nickname
+        FROM "group" g
+        LEFT JOIN public.group_member gm on g.id = gm.group_id
+        WHERE
+            member_id = #{userId}
+    </select>
+</mapper>
