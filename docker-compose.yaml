@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16.3
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=chatroom
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    restart: always
+
+  redis:
+    image: redis:7.2.5
+    ports:
+      - "6379:6379"
+    command: "redis-server"
+    volumes:
+      - ./data/redis:/data
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:3.13.3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - ./data/:/var/lib/rabbitmq/
+      - ./log/:/var/log/rabbitmq
+    restart: always
